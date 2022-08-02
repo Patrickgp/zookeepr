@@ -1,14 +1,17 @@
-// Left off at 11.3.1
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const { animals } = require("./data/animals");
 
 const app = express();
+
 // parse incoming string or array data
 app.use(express.urlencoded({ extended: true }));
 // parese incoming JSON data
 app.use(express.json());
+// express.static() instructs the server to make all the files inside "" static resources
+app.use(express.static("public"));
+
 const PORT = process.env.PORT || 3001;
 
 function filterByQuery(query, animalsArray) {
@@ -118,6 +121,22 @@ app.post("/api/animals", (req, res) => {
     const animal = createNewAnimal(req.body, animals);
     res.json(animal);
   }
+});
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+
+app.get("/animals", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/animals.html"));
+});
+
+app.get("/zookeepers", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/zookeepers.html"));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
 app.listen(PORT, () => {
